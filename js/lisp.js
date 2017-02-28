@@ -146,6 +146,15 @@ const builtins = {
         args: ['number', 'number'],
         func: (a, b) => a === b,
     },
+    //if 0 then 1 else 2
+    'if' : {
+        args: ['boolean', 'anything', 'anything'],
+        func: (a, b, c) => {
+            if (a)
+                return b;
+            else return c;
+        },
+    },
 };
 
 const parse = (oldTokens) => {
@@ -190,7 +199,7 @@ const parse = (oldTokens) => {
                 if (valueStack.length < 1) {
                     throw new Error(`Evaluation error: ${evaling} expects ${foundFunc.args.length} arguments, but only got ${args.length}`);
                 }
-                if (typeof valueStack.peek() !== foundFunc.args[argIndex]) {
+                if (typeof valueStack.peek() !== foundFunc.args[argIndex] && foundFunc.args[argIndex] !== 'anything') {
                     throw new Error(`Evaluation error: ${evaling} expects arg ${argIndex} to be a ${foundFunc.args[argIndex]} but it is a ${typeof valueStack.peek()}`)
                 }
                 args.push(valueStack.pop());

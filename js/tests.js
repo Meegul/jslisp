@@ -66,6 +66,11 @@ const test = () => {
     tests.addTest(new Test('(plus 0.5 0.5)', 1, 'be able to add floats', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('(float "0.5")', 0.5, 'be able to cast a string to a float', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('(float "a")', new Error(), 'throw an error when casting an incompatible value to a float', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(if true 1 2)', 1, 'be able to evaluate if true to the first argument', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(if false 1 2)', 2, 'be able to evaluate if false to the second argument', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(if (equals 1 1) 1 2)', 1, 'be able to evaluate an if statement dependent on an expression', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(if true "hi" 2)', 'hi', 'be able to evaluate if statements with arguments 1 and 2 of any type', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(if false "hi" 2)', 2, 'be able to evaluate if statements with arguments 1 and 2 of any type', (input) => lisp.evaluate(input)));
 
     const passes = tests.runTests();
     if (passes.indexOf(false) != -1) {
