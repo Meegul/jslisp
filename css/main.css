@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     background: #333;
-    font-family: monospace;
+    font-family: Source Code Pro, monospace;
     font-size: 1rem;
     color: #bbb;
 }
@@ -12,7 +12,7 @@ input {
     display: inline-block;
     background: #555;
     font-size: 1rem;
-    font-family: monospace;
+    font-family: Source Code Pro, monospace;
     width: 100%;
     text-overflow: clip;
     overflow: hidden;
