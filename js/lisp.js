@@ -26,7 +26,7 @@ class TokenType {
 //Token types. Precedence matters.
 //If a letter is matched multiple times, only the first match is used.
 tokenTypes = [
-    new TokenType(/\"[^"]*\"/g, 'string'),
+    new TokenType(/\"[^"]*\"/g, 'string', (a) => a.substring[1, a.length - 1]),
     new TokenType(/\s+/g, 'whitespace'),
     new TokenType(/[(]/g, 'openPar'),
     new TokenType(/[)]/g, 'closePar'),
@@ -99,13 +99,13 @@ const builtins = {
         args: ['number', 'number'],
         func: (a, b) => a + b,
     },
-    'plus' : {
-        args: ['string', 'string'],
-        func: (a, b) => a + b,
-    },
     'minus' : {
         args: ['number', 'number'],
         func: (a, b) => a - b,
+    },
+    'concat' : {
+        args: ['string', 'string'],
+        func: (a, b) => a + b,
     },
 };
 
@@ -207,9 +207,8 @@ const test = () => {
     const passed5 = expected5 === val5;
     console.log(`${text5} -> ${val5}, expected: ${expected5}| Passed: ${passed5}`);
 
-    const text6 = '(plus "hi " "there")';
+    const text6 = '(concat "hi " "there")';
     const tokens6 = lex(text6);
-    console.log(tokens6);
     const val6 = parse(tokens6);
     const expected6 = "hi there";
     const passed6 = expected6 === val6;
