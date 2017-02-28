@@ -120,8 +120,11 @@ const builtins = {
         args: ['string'],
         func: (a) => {
             const result = parseInt(a);
-            if (isNaN(result))
-                throw new Error(`${a} cannot be cast to an integer.`)
+            if (isNaN(result)) {
+                if (typeof a === 'string')
+                    throw new Error(`"${a}" cannot be cast to an integer.`)
+                else throw new Error(`${a} cannot be cast to an integer.`)
+            }
             return result;
         },
     },
