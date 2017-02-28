@@ -172,7 +172,7 @@ const parse = (oldTokens) => {
                 throw new Error(`Evaluation error: ${evaling} is not a valid function`);
             //Get the arguments to the function
             let args = []
-            for (let argIndex = 0; argIndex < foundFunc.args.length; argIndex++) {
+            for (let argIndex = foundFunc.args.length - 1; argIndex >= 0; argIndex--) {
                 if (valueStack.length < 1) {
                     throw new Error(`Evaluation error: ${evaling} expects ${foundFunc.args.length} arguments, but only got ${args.length}`);
                 }
