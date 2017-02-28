@@ -13,7 +13,10 @@ class Test {
         let actualResult;
         try {
             actualResult = this.func(this.input);
-            this.passed = actualResult === this.expected;
+            if (typeof actualResult === 'object' && typeof this.expected === 'object')  {
+                //Used for testing array equality
+                this.passed = JSON.stringify(actualResult) === JSON.stringify(this.expected);
+            } else this.passed = actualResult === this.expected;
             
         } catch (error) {
             actualResult = 'Error';
@@ -42,7 +45,6 @@ class Tester {
 }
 
 const test = () => {
-
     const tests = new Tester();
 
     tests.addTest(new Test('1', 1, 'be able to evaluate a constant number', (input) => lisp.evaluate(input)));
@@ -73,6 +75,10 @@ const test = () => {
     tests.addTest(new Test('(if false "hi" 2)', 2, 'be able to evaluate if statements with arguments 1 and 2 of any type', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('(string 1)', '1', 'be able to cast an int to a string', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('(string 1.5)', '1.5', 'be able to cast a float to a string', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('[1]', [1], 'be able to evaluate a constant array', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('["hi" 2]', ['hi', 2], 'be able to evaluate a constant array containing any types', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('[]', [], 'be able to evaluate an empty array', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('[(plus 1 1)]', new Error(), 'throw an error when trying to evaluate an expression in an array', (input) => lisp.evaluate(input)));
 
     const passes = tests.runTests();
     if (passes.indexOf(false) != -1) {

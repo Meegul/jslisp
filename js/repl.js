@@ -58,9 +58,17 @@ const processInput = (input) => {
     try {
         const val = evaluate(input);
         //Print the value with quotes if it's a string.
-        if (typeof val === 'string')
+        if (typeof val === 'string') {
             addLine(`"${val}"`);
-        else addLine(val);
+        //Print array properly
+        } else if (typeof val === 'object') {
+            const string = val.reduce((str, on) => {
+                if (typeof on === 'string')
+                    return `${str} "${on}"`;
+                else return `${str} ${on}`;
+            }, '');
+            addLine(`[ ${string} ]`);
+        } else addLine(val);
     } catch (error) {
         addLine(error);
     }

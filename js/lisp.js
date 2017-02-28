@@ -29,14 +29,16 @@ tokenTypes = [
     new TokenType(/\s+/g, 'whitespace'),
     new TokenType(/[(]/g, 'openPar'),
     new TokenType(/[)]/g, 'closePar'),
+    new TokenType(/\[/g, 'openBrack'),
+    new TokenType(/\]/g, 'closeBrack'),
     new TokenType(/([0-9]+[.][0-9]*)|([0-9]*[.][0-9]+)/g, 'float', (a) => parseFloat(a)),
     new TokenType(/[0-9]+/g, 'int', (a) => parseInt(a)),
     new TokenType(/(true)|(false)/g, 'boolean', (a) => a === 'true'),
     new TokenType(/[a-zA-Z]+/g, 'id')
 ];
 
-//Token value types.
-tokenValueTypes = ['int', 'float', 'string', 'boolean'];
+//Token value types
+tokenValueTypes = ['int', 'float', 'string', 'boolean', 'array'];
 
 class Token {
     constructor(tokenType, value, index) {
@@ -171,6 +173,8 @@ const parse = (oldTokens) => {
     let functionStack = [];
     let valueStack = [];
     let func = false; //Used to determine if next token should be a function
+    let makingArray = false; //Used to determine if next token should be a value for an array
+    let arr = []; //Used to build an array
     tokens.forEach((token) => {
         if (totalDepth < 0)
             throw new Error(`Parsing error: too many close parenthesis`);
@@ -179,15 +183,39 @@ const parse = (oldTokens) => {
             func = false;
         }
         if (!func && tokenValueTypes.indexOf(token.tokenType.name) !== -1) {
-            valueStack.push(token.value);
+            if (makingArray) {
+                arr.push(token.value); //Push the value to the in-progress array
+            } else {
+                valueStack.push(token.value); //Push the value straight to the valueStack
+            }
+        }
+        if (token.tokenType.name === 'openBrack') {
+            if (makingArray) {
+                throw new Error('Parsing error: trying to make an array within an array');
+            }
+            makingArray = true; //Signal that we're making an array
+        }
+        if (token.tokenType.name === 'closeBrack') {
+            if (!makingArray) {
+                throw new Error('Parsing error: trying to close a non-existant array');
+            }
+            makingArray = false; //Signal that we're done making an array
+            valueStack.push(arr); //Push the built array onto the value stack
+            arr = []; //Reset the value array
         }
         //Build a new expression
         if (token.tokenType.name === 'openPar') {
+            if (makingArray) {
+                throw new Error('Parsing error: trying to create an expression in an array');
+            }
             totalDepth++;
             func = true;
         }
         //Eval the expression
         if (token.tokenType.name === 'closePar') {
+            if (makingArray) {
+                throw new Error('Parsing error: trying to evaluate an expression in an array');
+            }
             totalDepth--;
             func = false;
             if (functionStack.length == 0) {
