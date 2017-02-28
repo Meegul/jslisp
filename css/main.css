@@ -1,0 +1,37 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #333;
+    font-family: monospace;
+    font-size: 1rem;
+    color: #bbb;
+}
+input {
+    padding: 0;
+    border: none;
+    display: inline-block;
+    background: #555;
+    font-size: 1rem;
+    font-family: monospace;
+    width: 100%;
+    text-overflow: clip;
+    overflow: hidden;
+    color: #bbb;
+}
+input:focus {
+    outline: none;
+}
+#line-input {
+    display: flex;
+    align-items: center;
+}
+#terminal {
+    font-size: 1rem;
+    width: 30rem;
+    background: #555;
+    margin: 3rem;
+}
+.terminal-wrapper {
+    display: flex;
+    justify-content: center;
+}
