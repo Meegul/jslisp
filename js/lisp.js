@@ -100,21 +100,30 @@ const lex = (input) => {
 };
 
 const builtins = {
+    //Add two numbers
     'plus' : {
         args: ['number', 'number'],
         func: (a, b) => a + b,
     },
+    //Subtract two numbers
     'minus' : {
         args: ['number', 'number'],
         func: (a, b) => a - b,
     },
+    //Concatenate two strings
     'concat' : {
         args: ['string', 'string'],
         func: (a, b) => a + b,
     },
+    //Cast string to int
     'int' : {
         args: ['string'],
-        func: (a) => parseInt(a),
+        func: (a) => {
+            const result = parseInt(a);
+            if (isNaN(result))
+                throw new Error(`${a} cannot be cast to an integer.`)
+            return result;
+        },
     },
 };
 
@@ -183,61 +192,8 @@ const evaluate = (inputText) => {
     return returned;
 }
 
-class Test {
-    constructor(input, expected, should, func) {
-        this.input = input;
-        this.expected = expected;
-        this.should = should;
-        this.func = func;
-        this.passed = false;
-    }
-
-    run() {
-        const actualResult = this.func(this.input);
-        this.passed = actualResult === this.expected;
-        if (!this.passed) {
-            console.log(`Should: ${this.should}`);
-            console.log(`${this.input}->${actualResult}, expected: ${this.expected} | Passed: ${this.passed}`);
-        }
-        return this.passed;
-    }
+if (module) {
+    module.exports.parse = parse;
+    module.exports.lex = lex;
+    module.exports.evaluate = evaluate;
 }
-
-class Tester {
-    constructor() {
-        this.tests = [];
-    }
-
-    addTest(test) {
-        this.tests.push(test);
-    }
-
-    runTests() {
-        return this.tests.map((on) => on.run());
-    }
-}
-
-const test = () => {
-
-    const tests = new Tester();
-
-    tests.addTest(new Test('1', 1, 'be able to evaluate a constant number', (input) => parse(lex(input))));
-    tests.addTest(new Test('(plus 123 123)', 246, 'be able to add two numbers', (input) => parse(lex(input))));
-    tests.addTest(new Test('(plus 1 (plus 2 3))', 6, 'be able to add numbers with expressions', (input) => parse(lex(input))));
-    tests.addTest(new Test('(minus 4 (plus 1 2))', 1, 'be able to subtract numbers with expressions', (input) => parse(lex(input))));
-    tests.addTest(new Test('(plus (minus 5 4) 2)', 3, 'be able to have expressions as any argument', (input) => parse(lex(input))));
-    tests.addTest(new Test('"Hello world!"', 'Hello world!', 'be able to evaluate a constant string', (input) => parse(lex(input))));
-    tests.addTest(new Test('(concat "hi " "there")', 'hi there', 'be able to concatenate strings', (input) => parse(lex(input))));
-    tests.addTest(new Test('(concat "1 " "2")', '1 2', 'be able to concatenate strings of numbers', (input) => parse(lex(input))));
-    tests.addTest(new Test('(int "123")', 123, 'be able to cast strings into ints', (input) => parse(lex(input))));
-
-    const passes = tests.runTests();
-    if (passes.indexOf(false) != -1) {
-        console.log('Test(s) failed.');
-    } else {
-        console.log('Test(s) passed.');
-    }
-
-};
-
-test();

@@ -1,0 +1,19 @@
+{
+  "name": "js-lisp",
+  "version": "0.0.1",
+  "description": "",
+  "main": "js/lisp.js",
+  "scripts": {
+    "test": "node js/tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Meegul/jsLisp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Meegul/jsLisp/issues"
+  },
+  "homepage": "https://github.com/Meegul/jsLisp#readme"
+}
