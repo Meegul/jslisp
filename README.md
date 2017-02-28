@@ -1,5 +1,5 @@
 # jslisp
-A lisp implemented in JavaScript. It uses a home-spun lexer and parser, and supports integers and strings.
+A lisp implemented in JavaScript. I wrote my own interpreter for it from scratch, including its lexer and parser.
 
 ### types
 * 'number': Any number, int or float. (0, 1, 1.5, .5, 1., etc.)
