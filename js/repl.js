@@ -57,7 +57,10 @@ const processInput = (input) => {
     addLine(`${prefix} ${input}`);
     try {
         const val = evaluate(input);
-        addLine(val);
+        //Print the value with quotes if it's a string.
+        if (typeof val === 'string')
+            addLine(`"${val}"`);
+        else addLine(val);
     } catch (error) {
         addLine(error);
     }

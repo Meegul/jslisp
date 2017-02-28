@@ -112,6 +112,10 @@ const builtins = {
         args: ['string', 'string'],
         func: (a, b) => a + b,
     },
+    'int' : {
+        args: ['string'],
+        func: (a) => parseInt(a),
+    },
 };
 
 const parse = (oldTokens) => {
@@ -180,9 +184,10 @@ const evaluate = (inputText) => {
 }
 
 class Test {
-    constructor(input, expected, func) {
+    constructor(input, expected, should, func) {
         this.input = input;
         this.expected = expected;
+        this.should = should;
         this.func = func;
         this.passed = false;
     }
@@ -191,78 +196,48 @@ class Test {
         const actualResult = this.func(this.input);
         this.passed = actualResult === this.expected;
         if (!this.passed) {
+            console.log(`Should: ${this.should}`);
             console.log(`${this.input}->${actualResult}, expected: ${this.expected} | Passed: ${this.passed}`);
         }
+        return this.passed;
+    }
+}
+
+class Tester {
+    constructor() {
+        this.tests = [];
+    }
+
+    addTest(test) {
+        this.tests.push(test);
+    }
+
+    runTests() {
+        return this.tests.map((on) => on.run());
     }
 }
 
 const test = () => {
 
-    //Test number values
-    const test1 = new Test('1', 1, (input) => parse(lex(input)));
-    test1.run();
-    /*
-    const text1 = '1';
-    const tokens1 = lex(text1);
-    const val1 = parse(tokens1);
-    const expected1 = 1;
-    const passed1 = expected1 === val1;
-    if (!passed1)
-        console.log(`${text1} -> ${val1}, expected: ${expected1} | Passed: ${passed1}`);
-    */
-    //Test builtin functions
-    const text2 = '(plus 123 123)';
-    const tokens2 = lex(text2);
-    const val2 = parse(tokens2);
-    const expected2 = 246;
-    const passed2 = expected2 === val2;
-    if (!passed2)
-        console.log(`${text2} -> ${val2}, expected: ${expected2} | Passed: ${passed2}`);
+    const tests = new Tester();
 
-    //Test embedded expressions & plus
-    const text3 = '(plus 1 (plus 2 3))';
-    const tokens3 = lex(text3);
-    const val3 = parse(tokens3);
-    const expected3 = 6;
-    const passed3 = expected3 === val3;
-    if (!passed3)
-        console.log(`${text3} -> ${val3}, expected: ${expected3} | Passed: ${passed3}`);
+    tests.addTest(new Test('1', 1, 'be able to evaluate a constant number', (input) => parse(lex(input))));
+    tests.addTest(new Test('(plus 123 123)', 246, 'be able to add two numbers', (input) => parse(lex(input))));
+    tests.addTest(new Test('(plus 1 (plus 2 3))', 6, 'be able to add numbers with expressions', (input) => parse(lex(input))));
+    tests.addTest(new Test('(minus 4 (plus 1 2))', 1, 'be able to subtract numbers with expressions', (input) => parse(lex(input))));
+    tests.addTest(new Test('(plus (minus 5 4) 2)', 3, 'be able to have expressions as any argument', (input) => parse(lex(input))));
+    tests.addTest(new Test('"Hello world!"', 'Hello world!', 'be able to evaluate a constant string', (input) => parse(lex(input))));
+    tests.addTest(new Test('(concat "hi " "there")', 'hi there', 'be able to concatenate strings', (input) => parse(lex(input))));
+    tests.addTest(new Test('(concat "1 " "2")', '1 2', 'be able to concatenate strings of numbers', (input) => parse(lex(input))));
+    tests.addTest(new Test('(int "123")', 123, 'be able to cast strings into ints', (input) => parse(lex(input))));
 
-    //Test embedded expressions & minus
-    const text4 = '(minus 4 (plus 1 2))'
-    const tokens4 = lex(text4);
-    const val4 = parse(tokens4);
-    const expected4 = 1;
-    const passed4 = expected4 === val4;
-    if (!passed4)
-        console.log(`${text4} -> ${val4}, expected: ${expected4} | Passed: ${passed4}`);
+    const passes = tests.runTests();
+    if (passes.indexOf(false) != -1) {
+        console.log('Test(s) failed.');
+    } else {
+        console.log('Test(s) passed.');
+    }
 
-    //Test embedded expressions as first argument
-    const text5 = '(plus (minus 5 4) 2)';
-    const tokens5 = lex(text5);
-    const val5 = parse(tokens5);
-    const expected5 = 3;
-    const passed5 = expected5 === val5;
-    if (!passed5)
-        console.log(`${text5} -> ${val5}, expected: ${expected5} | Passed: ${passed5}`);
-
-    //Test string values
-    const text6 = '(concat "hi " "there")';
-    const tokens6 = lex(text6);
-    const val6 = parse(tokens6);
-    const expected6 = "hi there";
-    const passed6 = expected6 === val6;
-    if (!passed6)
-        console.log(`${text6} -> ${val6}, expected: ${expected6} | Passed: ${passed6}`);
-
-    //Test string values containing numbers
-    const text7 = '(concat "1 " "2")';
-    const tokens7 = lex(text7);
-    const val7 = parse(tokens7);
-    const expected7 = "1 2";
-    const passed7 = expected7 === val7;
-    if (!passed7)
-        console.log(`${text7} -> ${val7}, expected: ${expected7} | Passed: ${passed7}`);
 };
 
 test();
