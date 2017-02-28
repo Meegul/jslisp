@@ -30,11 +30,12 @@ tokenTypes = [
     new TokenType(/[(]/g, 'openPar'),
     new TokenType(/[)]/g, 'closePar'),
     new TokenType(/[0-9]+/g, 'int', (a) => parseInt(a)),
+    new TokenType(/(true)|(false)/g, 'boolean', (a) => a === 'true'),
     new TokenType(/[a-zA-Z]+/g, 'id')
 ];
 
 //Token value types.
-tokenValueTypes = ['int', 'string'];
+tokenValueTypes = ['int', 'string', 'boolean'];
 
 class Token {
     constructor(tokenType, value, index) {
@@ -42,8 +43,6 @@ class Token {
         this.value = value;
         this.index = index;
     }
-
-
 }
 
 //flatten polyfill
@@ -127,6 +126,11 @@ const builtins = {
             }
             return result;
         },
+    },
+    //Check equality of numbers
+    'equals' : {
+        args: ['number', 'number'],
+        func: (a, b) => a === b,
     },
 };
 

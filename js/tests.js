@@ -55,6 +55,11 @@ const test = () => {
     tests.addTest(new Test('(concat "1 " "2")', '1 2', 'be able to concatenate strings of numbers', (input) => lisp.parse(lisp.lex(input))));
     tests.addTest(new Test('(int "123")', 123, 'be able to cast strings into ints', (input) => lisp.parse(lisp.lex(input))));
     tests.addTest(new Test('(int "a")', new Error(), 'throw an error when casting an incompatible value to an int', (input) => lisp.parse(lisp.lex(input))));
+    tests.addTest(new Test('true', true, 'be able to evaluate a constant boolean', (input) => lisp.parse(lisp.lex(input))));
+    tests.addTest(new Test('false', false, 'be able to evaluate a constant boolean', (input) => lisp.parse(lisp.lex(input))));
+    tests.addTest(new Test('(equals 1 1)', true, 'be able to compare equality of two numbers', (input) => lisp.parse(lisp.lex(input))));
+    tests.addTest(new Test('(equals 0 0)', true, 'be able to compare equality of two numbers', (input) => lisp.parse(lisp.lex(input))));
+    tests.addTest(new Test('(equals 1 0)', false, 'be able to compare equality of two numbers', (input) => lisp.parse(lisp.lex(input))));
 
     const passes = tests.runTests();
     if (passes.indexOf(false) != -1) {
