@@ -148,10 +148,14 @@ const builtins = {
         args: ['anything'],
         func: (a) => '' + a,
     },
-    //Check equality of numbers
+    //Check equality of values
     'equals' : {
-        args: ['number', 'number'],
-        func: (a, b) => a === b,
+        args: ['anything', 'anything'],
+        func: (a, b) => {
+            if (typeof a === 'object' && typeof b === 'object') {
+                return JSON.stringify(a) === JSON.stringify(b);
+            } else return a === b;
+        },
     },
     //if 0 then 1 else 2
     'if' : {
