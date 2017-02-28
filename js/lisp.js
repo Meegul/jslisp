@@ -141,6 +141,11 @@ const builtins = {
             return result;
         },
     },
+    //Cast anything to string
+    'string' : {
+        args: ['anything'],
+        func: (a) => '' + a,
+    },
     //Check equality of numbers
     'equals' : {
         args: ['number', 'number'],

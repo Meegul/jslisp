@@ -71,6 +71,8 @@ const test = () => {
     tests.addTest(new Test('(if (equals 1 1) 1 2)', 1, 'be able to evaluate an if statement dependent on an expression', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('(if true "hi" 2)', 'hi', 'be able to evaluate if statements with arguments 1 and 2 of any type', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('(if false "hi" 2)', 2, 'be able to evaluate if statements with arguments 1 and 2 of any type', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(string 1)', '1', 'be able to cast an int to a string', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(string 1.5)', '1.5', 'be able to cast a float to a string', (input) => lisp.evaluate(input)));
 
     const passes = tests.runTests();
     if (passes.indexOf(false) != -1) {
