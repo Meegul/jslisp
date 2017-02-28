@@ -29,13 +29,14 @@ tokenTypes = [
     new TokenType(/\s+/g, 'whitespace'),
     new TokenType(/[(]/g, 'openPar'),
     new TokenType(/[)]/g, 'closePar'),
+    new TokenType(/([0-9]+[.][0-9]*)|([0-9]*[.][0-9]+)/g, 'float', (a) => parseFloat(a)),
     new TokenType(/[0-9]+/g, 'int', (a) => parseInt(a)),
     new TokenType(/(true)|(false)/g, 'boolean', (a) => a === 'true'),
     new TokenType(/[a-zA-Z]+/g, 'id')
 ];
 
 //Token value types.
-tokenValueTypes = ['int', 'string', 'boolean'];
+tokenValueTypes = ['int', 'float', 'string', 'boolean'];
 
 class Token {
     constructor(tokenType, value, index) {
@@ -123,6 +124,19 @@ const builtins = {
                 if (typeof a === 'string')
                     throw new Error(`"${a}" cannot be cast to an integer.`)
                 else throw new Error(`${a} cannot be cast to an integer.`)
+            }
+            return result;
+        },
+    },
+    //Cast string to float
+    'float' : {
+        args: ['string'],
+        func: (a) => {
+            const result = parseFloat(a);
+            if (isNaN(result)) {
+                if (typeof a === 'string')
+                    throw new Error(`"${a}" cannot be cast to an float.`)
+                else throw new Error(`${a} cannot be cast to an float.`)
             }
             return result;
         },

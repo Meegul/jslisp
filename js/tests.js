@@ -60,6 +60,12 @@ const test = () => {
     tests.addTest(new Test('(equals 1 1)', true, 'be able to compare equality of two numbers', (input) => lisp.parse(lisp.lex(input))));
     tests.addTest(new Test('(equals 0 0)', true, 'be able to compare equality of two numbers', (input) => lisp.parse(lisp.lex(input))));
     tests.addTest(new Test('(equals 1 0)', false, 'be able to compare equality of two numbers', (input) => lisp.parse(lisp.lex(input))));
+    tests.addTest(new Test('.5', 0.5, 'be able to evaluate a constant float', (input) => lisp.parse(lisp.lex(input))));
+    tests.addTest(new Test('0.5', 0.5, 'be able to evaluate a constant float', (input) => lisp.parse(lisp.lex(input))));
+    tests.addTest(new Test('1.', 1.0, 'be able to evaluate a constant float', (input) => lisp.parse(lisp.lex(input))));
+    tests.addTest(new Test('(plus 0.5 0.5)', 1, 'be able to add floats', (input) => lisp.parse(lisp.lex(input))));
+    tests.addTest(new Test('(float "0.5")', 0.5, 'be able to cast a string to a float', (input) => lisp.parse(lisp.lex(input))));
+    tests.addTest(new Test('(float "a")', new Error(), 'throw an error when casting an incompatible value to a float', (input) => lisp.parse(lisp.lex(input))));
 
     const passes = tests.runTests();
     if (passes.indexOf(false) != -1) {
