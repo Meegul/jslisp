@@ -1,5 +1,5 @@
 {
-  "name": "js-lisp",
+  "name": "jslisp",
   "version": "0.0.1",
   "description": "",
   "main": "js/lisp.js",
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/Meegul/jsLisp.git"
   },
-  "author": "",
+  "author": "Meegul",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Meegul/jsLisp/issues"
