@@ -79,6 +79,11 @@ const test = () => {
     tests.addTest(new Test('["hi" 2]', ['hi', 2], 'be able to evaluate a constant array containing any types', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('[]', [], 'be able to evaluate an empty array', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('[(plus 1 1)]', new Error(), 'throw an error when trying to evaluate an expression in an array', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(length "fiz")', 3, 'be able to get the length of a string', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(length [1 2])', 2, 'be able to get the length of an array', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(length 1)', new Error(), 'throw an error when trying to get the length of a value that is not a string or array', (input) => lisp.evaluate(input)));
+
+
 
     const fails = tests.runTests().filter((passed) => !passed).length;
     if (fails > 0) {

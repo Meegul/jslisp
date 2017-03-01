@@ -137,8 +137,8 @@ const builtins = {
             const result = parseFloat(a);
             if (isNaN(result)) {
                 if (typeof a === 'string')
-                    throw new Error(`"${a}" cannot be cast to an float.`)
-                else throw new Error(`${a} cannot be cast to an float.`)
+                    throw new Error(`"${a}" cannot be cast to an float.`);
+                else throw new Error(`${a} cannot be cast to an float.`);
             }
             return result;
         },
@@ -147,6 +147,15 @@ const builtins = {
     'string' : {
         args: ['anything'],
         func: (a) => '' + a,
+    },
+    //Gets the length of an array or string
+    'length' : {
+        args: ['anything'],
+        func: (a) => {
+            if (typeof a !== 'string' && typeof a !== 'object')
+                throw new Error(`Cannot get length of ${a} as it is neither a string nor array.`);
+            return a.length;
+        },
     },
     //Check equality of values
     'equals' : {
