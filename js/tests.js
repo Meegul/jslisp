@@ -80,11 +80,11 @@ const test = () => {
     tests.addTest(new Test('[]', [], 'be able to evaluate an empty array', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('[(plus 1 1)]', new Error(), 'throw an error when trying to evaluate an expression in an array', (input) => lisp.evaluate(input)));
 
-    const passes = tests.runTests();
-    if (passes.indexOf(false) != -1) {
-        console.log('Test(s) failed.');
+    const fails = tests.runTests().filter((passed) => !passed).length;
+    if (fails > 0) {
+        console.log(`${fails} test(s) failed.`);
     } else {
-        console.log('Test(s) passed.');
+        console.log('All test(s) passed.');
     }
 
 };
