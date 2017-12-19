@@ -177,7 +177,33 @@ const builtins = {
             else return c;
         },
     },
+    //index, 0 is 1st, 1 is 2nd, -1 is last, -2 is second to last
+    'at' : {
+        args: ['array', 'number'], 
+        func: (a, b) => {
+            if (b < 0)
+                b = a.length - b;
+            if (a.length > b && b >= 0)
+                return a[b];
+            else throw new Error(`Cannot get element ${b} of ${a}`);
+        }
+    },
+    //string substring
+    'substr': {
+        args: ['string', 'number', 'number'],
+        func: (a, b, c) => {
+            if (b >= a.length || c > a.length || b < 0 || c < b) {
+                throw new Error(`Cannot get characters ${b} up to ${c} of ${a}`);
+            } else return a.substring(b, c);
+        }
+    }
 };
+
+function type(a) {
+    if (Array.isArray(a)) {
+        return 'array';
+    } else return typeof a;
+}
 
 const parse = (oldTokens) => {
     //Disregard whitespace
@@ -271,8 +297,8 @@ const parse = (oldTokens) => {
                 if (valueStack.length < 1) {
                     throw new Error(`Evaluation error: ${evaling} expects ${foundFunc.args.length} arguments, but only got ${args.length}`);
                 }
-                if (typeof valueStack.peek() !== foundFunc.args[argIndex] && foundFunc.args[argIndex] !== 'anything') {
-                    throw new Error(`Evaluation error: ${evaling} expects arg ${argIndex} to be a ${foundFunc.args[argIndex]} but it is a ${typeof valueStack.peek()}`)
+                if (type(valueStack.peek()) !== foundFunc.args[argIndex] && foundFunc.args[argIndex] !== 'anything') {
+                    throw new Error(`Evaluation error: ${evaling} expects arg ${argIndex} to be a ${foundFunc.args[argIndex]} but it is a ${type(valueStack.peek())}`)
                 }
                 args.push(valueStack.pop());
             }
