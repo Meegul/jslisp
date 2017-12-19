@@ -10,21 +10,23 @@ class Test {
     }
 
     run() {
-        let actualResult;
+        let result, details;
         try {
-            actualResult = this.func(this.input);
-            if (typeof actualResult === 'object' && typeof this.expected === 'object')  {
+            result = this.func(this.input);
+            if (typeof result === 'object' && typeof this.expected === 'object')  {
                 //Used for testing array equality
-                this.passed = JSON.stringify(actualResult) === JSON.stringify(this.expected);
-            } else this.passed = actualResult === this.expected;
-            
+                this.passed = JSON.stringify(result) === JSON.stringify(this.expected);
+            } else this.passed = result === this.expected;
         } catch (error) {
-            actualResult = 'Error';
+            result = 'Error';
+            details = error;
             this.passed = this.expected instanceof Error;
         }
         if (!this.passed) {
             console.log(`Should: ${this.should}`);
-            console.log(`${this.input}->${actualResult}, expected: ${this.expected} | Passed: ${this.passed}`);
+            console.log(`${this.input}->${result}, expected: ${this.expected} | Passed: ${this.passed}`);
+            if (details)
+                console.log(details);
         }
         return this.passed;
     }
@@ -47,6 +49,7 @@ class Tester {
 const test = () => {
     const tests = new Tester();
 
+    //Basics
     tests.addTest(new Test('1', 1, 'be able to evaluate a constant number', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('(plus 123 123)', 246, 'be able to add two numbers', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('(plus 1 (plus 2 3))', 6, 'be able to add numbers with expressions', (input) => lisp.evaluate(input)));
@@ -82,9 +85,9 @@ const test = () => {
     tests.addTest(new Test('(length "fiz")', 3, 'be able to get the length of a string', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('(length [1 2])', 2, 'be able to get the length of an array', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('(length 1)', new Error(), 'throw an error when trying to get the length of a value that is not a string or array', (input) => lisp.evaluate(input)));
-
-
-
+    tests.addTest(new Test('(if true (if true (if true true false) false) false)', true, 'be able to parse multiple similar nested statements', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(plus (def a 1) a)', 2, 'be able to define constants', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(concat (concat (def const "string") const) const)', 'stringstringstring', 'be able to define string constants', (input) => lisp.evaluate(input)));
     const fails = tests.runTests().filter((passed) => !passed).length;
     if (fails > 0) {
         console.log(`${fails} test(s) failed.`);

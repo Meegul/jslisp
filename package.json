@@ -15,5 +15,6 @@
   "bugs": {
     "url": "https://github.com/Meegul/jsLisp/issues"
   },
-  "homepage": "https://github.com/Meegul/jsLisp#readme"
+  "homepage": "https://github.com/Meegul/jsLisp#readme",
+  "dependencies": {}
 }

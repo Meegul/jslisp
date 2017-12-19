@@ -24,6 +24,8 @@ class TokenType {
 
 //Token types. Precedence matters.
 //If a letter is matched multiple times, only the first match is used.
+//Therefore, whichever type comes first here has precedence over preceeding ones.
+//TokenTypes without cast functions 
 tokenTypes = [
     new TokenType(/\"[^"]*\"/g, 'string', (a) => a.substring(1, a.length - 1)),
     new TokenType(/\s+/g, 'whitespace'),
@@ -188,12 +190,36 @@ const parse = (oldTokens) => {
     let func = false; //Used to determine if next token should be a function
     let makingArray = false; //Used to determine if next token should be a value for an array
     let arr = []; //Used to build an array
-    tokens.forEach((token) => {
+    let skippingTo = -1; //Used to skip elements if they were used early by a built-in
+    let env = {};
+    tokens.forEach((token, i) => {
+        //See if we want to skip this token, as we've used it in a declaration
+        if (i < skippingTo)
+            return;
+
         if (totalDepth < 0)
             throw new Error(`Parsing error: too many close parenthesis`);
+        //If we're looking for a function and this is an id
         if (func && token.tokenType.name === 'id') {
-            functionStack.push(token.value);
+            //First see if we're defining something
+            if (token.value === 'def') {
+                //Make the definition
+                const key = tokens[i+1].value;
+                const val = tokens[i+2].value;
+                env[key] = val;
+                //Push the resulting value to the stack
+                valueStack.push(val);
+                //Skip to the next value
+                skippingTo = i + 4;
+                totalDepth--;
+            } else {
+                functionStack.push(token.value);
+            }
             func = false;
+        } else if (token.tokenType.name === 'id') {
+            if ((token.value) in env)
+                valueStack.push(env[token.value])
+            else throw new Error(`Evaluation error: undefined constant ${token.value}`);
         }
         if (!func && tokenValueTypes.indexOf(token.tokenType.name) !== -1) {
             if (makingArray) {
@@ -236,11 +262,11 @@ const parse = (oldTokens) => {
             }
             //Lookup the function
             const evaling = functionStack.pop();
-            const foundFunc = builtins[evaling];
+            const foundFunc = evaling in builtins ? builtins[evaling] : env[evaling];
             if (!foundFunc)
                 throw new Error(`Evaluation error: ${evaling} is not a valid function`);
             //Get the arguments to the function
-            let args = []
+            const args = []
             for (let argIndex = foundFunc.args.length - 1; argIndex >= 0; argIndex--) {
                 if (valueStack.length < 1) {
                     throw new Error(`Evaluation error: ${evaling} expects ${foundFunc.args.length} arguments, but only got ${args.length}`);
@@ -252,6 +278,7 @@ const parse = (oldTokens) => {
             }
             //Reverse the arguments, as they're backwards.
             args.reverse();
+            
             //Call the function, and push the return to the valueStack
             const evaluated = foundFunc.func(...args);
             valueStack.push(evaluated);
