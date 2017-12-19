@@ -86,8 +86,10 @@ const test = () => {
     tests.addTest(new Test('(length [1 2])', 2, 'be able to get the length of an array', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('(length 1)', new Error(), 'throw an error when trying to get the length of a value that is not a string or array', (input) => lisp.evaluate(input)));
     tests.addTest(new Test('(if true (if true (if true true false) false) false)', true, 'be able to parse multiple similar nested statements', (input) => lisp.evaluate(input)));
-    tests.addTest(new Test('(plus (def a 1) a)', 2, 'be able to define constants', (input) => lisp.evaluate(input)));
-    tests.addTest(new Test('(concat (concat (def const "string") const) const)', 'stringstringstring', 'be able to define string constants', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(def a 2 a)', 2, 'be able to define constants', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(def a "string" (concat (concat a a) a))', 'stringstringstring', 'be able to define string constants', (input) => lisp.evaluate(input)));
+    tests.addTest(new Test('(def a "hello " (def b "world!" (concat a b)))', 'hello world!', 'be able to define two string constants', (input) => lisp.evaluate(input)));
+
     const fails = tests.runTests().filter((passed) => !passed).length;
     if (fails > 0) {
         console.log(`${fails} test(s) failed.`);

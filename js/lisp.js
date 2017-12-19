@@ -232,12 +232,14 @@ const parse = (oldTokens) => {
                 //Make the definition
                 const key = tokens[i+1].value;
                 const val = tokens[i+2].value;
+                if (key in env) {
+                    throw new Error(`Evaluation error: ${key} is already defined.`);
+                }
                 env[key] = val;
                 //Push the resulting value to the stack
-                valueStack.push(val);
+                //valueStack.push(val); or not
                 //Skip to the next value
-                skippingTo = i + 4;
-                totalDepth--;
+                skippingTo = i + 3;
             } else {
                 functionStack.push(token.value);
             }
@@ -283,8 +285,13 @@ const parse = (oldTokens) => {
             }
             totalDepth--;
             func = false;
-            if (functionStack.length == 0) {
-                throw new Error(`Parsing error: Cannot evaluate without a function`);
+            //If we neither have a function nor value to return
+            if (functionStack.length == 0 && valueStack.length == 0) {
+                throw new Error(`Parsing error: Cannot evaluate without a function or value`);
+            }
+            //If we only have a value to return, return it
+            if (functionStack.length == 0 && valueStack.length > 0) {
+                return;
             }
             //Lookup the function
             const evaling = functionStack.pop();
